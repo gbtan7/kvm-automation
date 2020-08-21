@@ -76,11 +76,9 @@ SUBSYSTEM=="usb", MODE="0660", GROUP="kvm"
 ```
 File: /etc/udev/rules.d/80-tap-kvm-group.rules
 ```
-KERNEL=="tun", GROUP="kvm", MODE="0660",
-OPTIONS+="static_node=net/tun"
+KERNEL=="tun", GROUP="kvm", MODE="0660", OPTIONS+="static_node=net/tun"
 SUBSYSTEM=="macvtap", GROUP="kvm", MODE="0660"
-KERNEL=="tun", GROUP="kvm", MODE="0660",
-OPTIONS+="static_node=net/tun"
+KERNEL=="tun", GROUP="kvm", MODE="0660", OPTIONS+="static_node=net/tun"
 SUBSYSTEM=="macvlan", GROUP="kvm", MODE="0660"
 ```
 ## Reboot
