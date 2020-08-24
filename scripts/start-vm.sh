@@ -34,7 +34,7 @@ else
         exit 1
 fi
 
-QEMU="/usr/local/bin/qemu-system-x86_64 -enable-kvm "
+QEMU="/usr/bin/qemu-system-x86_64 -enable-kvm "
 DEF_MEMORY=2048
 DEF_CPU=2
 DEF_MACHINE="pc"
