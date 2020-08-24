@@ -16,6 +16,5 @@ fi
 # iterate through vgpu uuid and create uuid
 for uuid in $VGPU
 do
-        /bin/sh -c "echo $uuid > ${BASEVGPU}/mdev_supported_types/${VGPU_TYPE}/c
-reate"
+        /bin/sh -c "echo $uuid > ${BASEVGPU}/mdev_supported_types/${VGPU_TYPE}/create"
 done

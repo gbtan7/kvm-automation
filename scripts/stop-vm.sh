@@ -36,5 +36,5 @@ fi
 
 if [ ! -z "$MONITOR" ]
 then
-	echo 'system_powerdown' |  /usr/bin/nc localhost $MONITOR	
+	echo 'system_powerdown' |  nc localhost $MONITOR	
 fi	

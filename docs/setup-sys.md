@@ -56,13 +56,15 @@ $ sudo update-grub2
 ```
 ## Setting up subsystem with the right permission
 
-Running guest VM as root is not preferred. The recommended way is to only allow certain group to have that right. Typically for KVM hypervisor, the group name is 'kvm'. Thus the recommended is to add the designated user to 'kvm' group. Other privilege such as serial port ownershit can be added by adding 'dialout' group to the user. Additionally if Spice or VNC remote access is required, user will need to access /dev/dri/render128 which is allowed by group 'render'.
+Running guest VM as root is not preferred. The recommended way is to only allow certain group to have that right. Typically for KVM hypervisor, the group name is 'kvm'. Thus the recommended is to add the designated user to 'kvm' group. Other privilege such as serial port ownership can be added by adding 'dialout' group to the user. Additionally if Spice or VNC remote access is required, user will need to access /dev/dri/render128 which is allowed by group 'render' or 'video' if 'render' is not defined.
 
 Let say user vmadmin is the designated user, below is the script:
 
 ```
 $ sudo usermod -a -G kvm vmadmin
 $ sudo usermod -a -G render vmadmin
+- or -
+$ sudo usermod -a -G video vmadmin
 $ sudo usermod -a -G dialout vmadmin
 ```
 Besides permission, the designated user should also be give unlimiter memory lock capability. The following lines can be added to /etc/security/limits.conf

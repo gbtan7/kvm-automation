@@ -4,7 +4,7 @@ In order to have KVM guest OS properly running with GVTg GPU, we need to have se
 * VGPU service
 * Guest OS service
 
-Both services requires configuration which will be defined in an executable script file called /var/vm/scripts/env/sh
+Both services requires configuration which will be defined in an executable script file called /var/vm/scripts/env.sh
 ```
 #!/bin/bash
 # Note: VGPU ports mask setting must be done before any VGPU is created
@@ -50,8 +50,7 @@ fi
 # iterate through vgpu uuid and create uuid
 for uuid in $VGPU
 do
-        /bin/sh -c "echo $uuid > ${BASEVGPU}/mdev_supported_types/${VGPU_TYPE}/c
-reate"
+        /bin/sh -c "echo $uuid > ${BASEVGPU}/mdev_supported_types/${VGPU_TYPE}/create"
 done
 ```
 
@@ -99,7 +98,7 @@ ExecStop=/var/vm/scripts/destroy-vgpu.sh
 [Install]
 WantedBy=multi-user.target
 ```
-Once the files are located in place withe the right permission (i.e. executable), we can enable the VGPU service.
+Once the files are located in place with the right permission (i.e. executable), we can enable the VGPU service.
 ```
 $ sudo systemctl enable vgpu.service
 $ sudo systemctl start vgpu.service
