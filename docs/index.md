@@ -4,4 +4,4 @@ The purpose of this documentation is to structurally guide the process to build 
 
 * [Base component preparation](./base.md)
 * [Setting up base OS, permissions and environment](./setup-sys.md)
-* [Settinmg services](./setup-svc.md)
+* [Setting services](./setup-svc.md)
