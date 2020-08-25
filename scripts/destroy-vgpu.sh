@@ -11,6 +11,13 @@ else
         echo "Could not find necessary environment setting."
         exit 1
 fi
+
+unblock_script="/var/vm/scripts/unblock_update.sh"
+if [ -f $unblock_script ]; then
+        $unblock_script
+fi
+
+
 # iterate through vgpu uuid and create uuid
 for uuid in $VGPU
 do

@@ -5,6 +5,11 @@ if [[ $EUID -ne 0 ]]; then
         exit 1
 fi
 
+block_script="/var/vm/scripts/block_update.sh"
+if [ -f $block_script ]; then
+	$block_script
+fi
+
 if [ -f $envconfig ]; then
         source $envconfig
 else
