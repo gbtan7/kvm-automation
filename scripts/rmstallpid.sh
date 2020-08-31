@@ -11,11 +11,11 @@ if [ -f "$pcmdl" ]; then
 	isqemu=`grep qemu-system-x86_64 ${pcmdl}`
 	if [ -z "$isqemu" ]; then
 		echo "Removing stale pidfile: ${pidfile}"
-		#unlink ${pidfile}
+		rm -f ${pidfile}
 	else 
 		echo "A valid process is running"
 	fi
 else 
 	echo "Removing stale pidfile: ${pidfile}"
-	#unlink ${pidfile}
+	rm -f ${pidfile}
 fi
