@@ -34,6 +34,8 @@ else
         exit 1
 fi
 
+/var/vm/scripts/rmstalpid.sh ${1}
+
 QEMU="/usr/bin/qemu-system-x86_64 -enable-kvm "
 DEF_MEMORY=2048
 DEF_CPU=2
