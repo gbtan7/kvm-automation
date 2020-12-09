@@ -5,10 +5,10 @@ if [[ $EUID -ne 0 ]]; then
         exit 1
 fi
 
-block_script="/var/vm/scripts/block_update.sh"
-if [ -f $block_script ]; then
-	$block_script
-fi
+#block_script="/var/vm/scripts/block_update.sh"
+#if [ -f $block_script ]; then
+#	$block_script
+#fi
 
 if [ -f $envconfig ]; then
         source $envconfig
@@ -19,7 +19,7 @@ fi
 # Setting VGPU mask
 /bin/sh -c "echo $MASK > /sys/class/drm/card0/gvt_disp_ports_mask"
 # iterate through vgpu uuid and create uuid
-for uuid in $VGPU
+for uuid in $VGPUS
 do
         /bin/sh -c "echo $uuid > ${BASEVGPU}/mdev_supported_types/${VGPU_TYPE}/create"
 done
