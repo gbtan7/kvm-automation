@@ -139,8 +139,10 @@ then
         if [ -z "$DISPLAY" ]
         then
                 DISPLAY="off"
-        fi
-        QEMU_SCRIPT+=" -device vfio-pci,sysfsdev=/sys/bus/pci/devices/0000:00:02.0/$VGPU,rombar=0,display=$DISPLAY,x-igd-opregion=on"
+                QEMU_SCRIPT+=" -device vfio-pci,sysfsdev=/sys/bus/pci/devices/0000:00:02.0/$VGPU,rombar=0,display=$DISPLAY,x-igd-opregion=on"
+        else 
+                QEMU_SCRIPT+=" -device vfio-pci,sysfsdev=/sys/bus/pci/devices/0000:00:02.0/$VGPU,rombar=0,display=$DISPLAY,x-igd-opregion=on,xres=1900,yres=1080"
+        fi        
 fi
 
 if [ ! -z "$DEVPT" ]
