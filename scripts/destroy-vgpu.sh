@@ -12,14 +12,8 @@ else
         exit 1
 fi
 
-#unblock_script="/var/vm/scripts/unblock_update.sh"
-#if [ -f $unblock_script ]; then
-#        $unblock_script
-#fi
-
-
 # iterate through vgpu uuid and create uuid
-for uuid in $VGPU
+for uuid in $VGPUS
 do
         if [ -f "${BASEVGPU}/${uuid}/remove" ]; then
                 /bin/sh -c "echo 1 > ${BASEVGPU}/${uuid}/remove"

@@ -20,7 +20,7 @@ MASK=0x0000000000000402
 VGPU1="f50aab10-7cc8-11e9-a94b-6b9d8245bfc1"
 VGPU2="f50aab10-7cc8-11e9-a94b-6b9d8245bfc2"
 VGPU3="f50aab10-7cc8-11e9-a94b-6b9d8245bfc3"
-VGPU=" $VGPU1 $VGPU2 $VGPU3 "
+VGPUS=" $VGPU1 $VGPU2 $VGPU3 "
 VGPU_TYPE="i915-GVTg_V5_4"
 BASEVGPU="/sys/bus/pci/devices/0000:00:02.0"
 DIR="/var/vm"
@@ -48,7 +48,7 @@ fi
 # Setting VGPU mask
 /bin/sh -c "echo $MASK > /sys/class/drm/card0/gvt_disp_ports_mask"
 # iterate through vgpu uuid and create uuid
-for uuid in $VGPU
+for uuid in $VGPUS
 do
         /bin/sh -c "echo $uuid > ${BASEVGPU}/mdev_supported_types/${VGPU_TYPE}/create"
 done
@@ -70,7 +70,7 @@ else
         exit 1
 fi
 # iterate through vgpu uuid and create uuid
-for uuid in $VGPU
+for uuid in $VGPUS
 do
         if [ -f "${BASEVGPU}/${uuid}/remove" ]; then
                 /bin/sh -c "echo 1 > ${BASEVGPU}/${uuid}/remove"
@@ -103,6 +103,14 @@ Once the files are located in place with the right permission (i.e. executable),
 $ sudo systemctl enable vgpu.service
 $ sudo systemctl start vgpu.service
 ```
+
+## OVMF firmware
+OVMF firmware is recommended to run virtual machine. The recommendation is to download the latest from here:
+```
+https://www.kraxel.org/repos/jenkins/edk2/
+```
+
+Choose the x64 download and extract OVMF-pure-efi.fd
 
 ## QEMU service
 

@@ -80,7 +80,7 @@ Here are they key entries we need to update. Adjust kernel version ( in this cas
 
 ```
 GRUB_DEFAULT="Advanced options for Ubuntu>Ubuntu, with Linux 5.4.54-intelgvt+"
-GRUB_CMDLINE_LINUX_DEFAULT="splash quiet i915.enable_gvt=1 i915.enable_fbc=0 kvm.ignore_msrs=1 intel_iommu=on,igfx_off drm.debug=0"
+GRUB_CMDLINE_LINUX_DEFAULT="splash quiet consoleblank=0 i915.enable_gvt=1 i915.enable_fbc=0 kvm.ignore_msrs=1 intel_iommu=on,igfx_off drm.debug=0"
 ```
 For China UOS, the updated content will be like this:
 ```
@@ -88,7 +88,7 @@ For China UOS, the updated content will be like this:
 DEEPIN_GFXMODE_ADJUSTED=1
 GRUB_BACKGROUND="/boot/grub/themes/deepin/background.jpg"
 GRUB_CMDLINE_LINUX=""
-GRUB_CMDLINE_LINUX_DEFAULT="splash quiet i915.enable_gvt=1 i915.enable_fbc=0 kvm
+GRUB_CMDLINE_LINUX_DEFAULT="consoleblank=0 splash quiet i915.enable_gvt=1 i915.enable_fbc=0 kvm
 .ignore_msrs=1 intel_iommu=on,igfx_off drm.debug=0"
 GRUB_DEFAULT=saved
 GRUB_DISTRIBUTOR="`/usr/bin/lsb_release -d -s 2>/dev/null || echo Deepin`"
@@ -99,7 +99,7 @@ GRUB_TIMEOUT=5
 
 The next step will be to update Grub
 ```
-$ sudo update-grub2
+$ sudo update-grub2 -u -a "all"
 ```
 ## Setting up subsystem with the right permission
 
@@ -150,7 +150,7 @@ $ sudo shutdown -r now
 Once the system comes back online, we should be able to verify if the kernel is properly loaded by checking /proc/cmdline
 ```
 $ cat /proc/cmdline
-BOOT_IMAGE=/boot/vmlinuz-5.4.54-intelgvt+ root=UUID=baea869f-283c-483eb29e-8ea87927b48c ro splash quiet i915.enable_gvt=1 i915.enable_fbc=0 kvm.ignore_msrs=1 intel_iommu=on,igfx_off drm.debug=0 vt.handoff=1
+BOOT_IMAGE=/boot/vmlinuz-5.4.54-intelgvt+ root=UUID=baea869f-283c-483eb29e-8ea87927b48c ro consoleblank=0 splash quiet i915.enable_gvt=1 i915.enable_fbc=0 kvm.ignore_msrs=1 intel_iommu=on,igfx_off drm.debug=0 vt.handoff=1
 ```
 
 ## Verifying if GVT-g is working
