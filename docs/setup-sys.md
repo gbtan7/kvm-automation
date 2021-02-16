@@ -99,7 +99,7 @@ GRUB_TIMEOUT=5
 
 The next step will be to update Grub
 ```
-$ sudo update-grub2 -u -a "all"
+$ sudo update-grub2 -u -k "all"
 ```
 ## Setting up subsystem with the right permission
 
@@ -110,7 +110,6 @@ Let say user vmadmin is the designated user, below is the script:
 ```
 $ sudo usermod -a -G kvm vmadmin
 $ sudo usermod -a -G render vmadmin
-- or -
 $ sudo usermod -a -G video vmadmin
 $ sudo usermod -a -G dialout vmadmin
 ```
