@@ -24,6 +24,7 @@ VGPUS=" $VGPU1 $VGPU2 $VGPU3 "
 VGPU_TYPE="i915-GVTg_V5_4"
 BASEVGPU="/sys/bus/pci/devices/0000:00:02.0"
 DIR="/var/vm"
+TPM_BASEDIR="/var/vm/tpm"
 ```
 
 ## VGPU service
@@ -104,14 +105,6 @@ $ sudo systemctl enable vgpu.service
 $ sudo systemctl start vgpu.service
 ```
 
-## OVMF firmware
-OVMF firmware is recommended to run virtual machine. The recommendation is to download the latest from here:
-```
-https://www.kraxel.org/repos/jenkins/edk2/
-```
-
-Choose the x64 download and extract OVMF-pure-efi.fd
-
 ## QEMU service
 
 QEMU service is responsible for starting and stopping VM. It depends on two exectable scripts:
@@ -159,7 +152,9 @@ else
         exit 1
 fi
 
-QEMU="/usr/local/bin/qemu-system-x86_64 -enable-kvm "
+/var/vm/scripts/rmstalepid.sh ${1}
+
+QEMU="/usr/bin/qemu-system-x86_64 -enable-kvm "
 DEF_MEMORY=2048
 DEF_CPU=2
 DEF_MACHINE="pc"
@@ -262,8 +257,10 @@ then
         if [ -z "$DISPLAY" ]
         then
                 DISPLAY="off"
-        fi
-        QEMU_SCRIPT+=" -device vfio-pci,sysfsdev=/sys/bus/pci/devices/0000:00:02.0/$VGPU,rombar=0,display=$DISPLAY,x-igd-opregion=on"
+                QEMU_SCRIPT+=" -device vfio-pci,sysfsdev=/sys/bus/pci/devices/0000:00:02.0/$VGPU,rombar=0,display=$DISPLAY,x-igd-opregion=on"
+        else 
+                QEMU_SCRIPT+=" -device vfio-pci,sysfsdev=/sys/bus/pci/devices/0000:00:02.0/$VGPU,rombar=0,display=$DISPLAY,x-igd-opregion=on,xres=1900,yres=1080"
+        fi        
 fi
 
 if [ ! -z "$DEVPT" ]
@@ -275,12 +272,22 @@ if [ ! -z "$MONITOR" ]
 then
 	QEMU_SCRIPT+=" -monitor telnet:localhost:$MONITOR,server,nowait,nodelay "
 fi
+
+# swtpm support and run tpm daemon on demand
+if [ ! -z "$TPM" ]
+then
+        QEMU_SCRIPT+=" -chardev socket,id=chrtpm,path=${TPM_BASEDIR}/${TPM}/swtpm-sock "
+        QEMU_SCRIPT+=" -tpmdev emulator,id=${TPM},chardev=chrtpm -device tpm-tis,tpmdev=${TPM} "
+        /var/vm/scripts/run-tpm.sh ${TPM}
+fi
+
 # Daemonize and store PID at /tmp/qemu_filename.pid
 
 QEMU_SCRIPT+=" -daemonize -pidfile /tmp/qemu_${1}.pid "
 #echo "Script: "$QEMU_SCRIPT
 #Run qemu
 $QEMU_SCRIPT
+
 ```
 
 File (executable): /var/vm/scripts/stop-vm.sh
@@ -323,11 +330,21 @@ fi
 
 if [ ! -z "$MONITOR" ]
 then
-	echo 'system_powerdown' |  /usr/bin/nc localhost $MONITOR	
+	echo 'system_powerdown' |  nc localhost $MONITOR	
 fi	
 ```
+## Creating your first VM
 
-Below is an example of a configuration fiole for a VM:
+Create a 60G QCOW2 file for your VM.
+```
+$ cd /var/vm/disk
+$ qemu-img create -f qcow2 ubuntu.qcow2 60G
+```
+Make sure also Ubuntu installer iso is downloaded and copied in /var/vm/iso/ubuntu.iso.
+
+Additionally, make sure also and OVMF firmware is located in /var/vm/fw, e.g.: /var/vm/fw/OVMF-pure-efi.fd
+
+Create a VM configuration file in /var/vm/cfg/. Below is an example of a configuration fiole for a VM:
 File (executable): /var/vm/cfg/ubuntu.sh
 ```
 #!/bin/sh
@@ -336,17 +353,29 @@ VGPU="f50aab10-7cc8-11e9-a94b-6b9d8245bfc2"
 MAC="00:DE:AD:BE:EF:F1"
 MACHINE="q35"
 HDD=/home/vproadmin/vm/disk/ubuntu.qcow2
-#ISO=/home/vproadmin/vm/iso/ubuntu.iso
-BIOS=/home/vproadmin/vm/fw/OVMF.fd
+# Comment ISO after installation
+ISO=/home/vproadmin/vm/iso/ubuntu.iso
+BIOS=/home/vproadmin/vm/fw/OVMF-pure-efi.fd
 #IFUP=/home/vproadmin/vm/script/qemu-ifup-bridge
 DISPLAY="on"
+# Change VGA value to "qxl" if the OS installer has no Intel GPU driver
 VGA="none"
 #SERIAL="stdio"
 VNC=":1"
 EGL="egl-headless"
 MONITOR=7110
 DEVPT="-device usb-host,hostbus=1,hostport=3.1 -device usb-host,hostbus=1,hostport=3.2"
+TPM="tpm0"
 ```
+
+To test and run VM installation, run start-vm.sh from /var/vm/scripts/ with ubuntu as its argument.
+```
+$ cd /var/vm/scripts
+$ ./start-vm.sh ubuntu
+```
+Point VNC client to access the host IP/FQDN too get the remote display at port 5901. VM should be viewable from the VNC client.
+
+## Automating VM via systemd
 
 In order to use those scripts and configuration to manage VM in an automated fashion, the following qemu@.service file should be defined to dynamically run the VM based on the configuration.
 

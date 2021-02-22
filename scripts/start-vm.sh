@@ -154,6 +154,15 @@ if [ ! -z "$MONITOR" ]
 then
 	QEMU_SCRIPT+=" -monitor telnet:localhost:$MONITOR,server,nowait,nodelay "
 fi
+
+# swtpm support and run tpm daemon on demand
+if [ ! -z "$TPM" ]
+then
+        QEMU_SCRIPT+=" -chardev socket,id=chrtpm,path=${TPM_BASEDIR}/${TPM}/swtpm-sock "
+        QEMU_SCRIPT+=" -tpmdev emulator,id=${TPM},chardev=chrtpm -device tpm-tis,tpmdev=${TPM} "
+        /var/vm/scripts/run-tpm.sh ${TPM}
+fi
+
 # Daemonize and store PID at /tmp/qemu_filename.pid
 
 QEMU_SCRIPT+=" -daemonize -pidfile /tmp/qemu_${1}.pid "

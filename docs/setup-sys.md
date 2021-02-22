@@ -139,6 +139,50 @@ SUBSYSTEM=="macvtap", GROUP="kvm", MODE="0660"
 KERNEL=="tun", GROUP="kvm", MODE="0660", OPTIONS+="static_node=net/tun"
 SUBSYSTEM=="macvlan", GROUP="kvm", MODE="0660"
 ```
+## Installing QEMU, OVMF and SWTPM
+
+Default QEMU 4.2.1 from Ubuntu 20.04 works well. Here is the process of installing QEMU:
+```
+$ sudo apt install qemu-system-x86 ovmf
+```
+SWTPM is also available from launchpad https://launchpad.net/~stefanberger/+archive/ubuntu/swtpm-focal/.
+Here is the quick gude on installing SWTPM:
+```
+sudo add-apt-repository ppa:stefanberger/swtpm-focal
+sudo apt-get update
+sudo apt-get install swtpm
+```
+
+## Base folder structure for VM management
+Overall, the required scripts for this project will be hosted on folder /var/vm. Here are the steps to initialize the folder structure.
+```
+$ sudo mkdir /var/vm
+$ sudo chown -R vmadmin.vmadmin /var/vm
+$ mkdir -p /var/vm/{disk,iso,fw,cfg,tpm,scripts}
+$ mkdir -p /var/vm/tpm/{tpm0,tpm1,tpm2}
+```
+Here are the description of each folder:
+
+| Folder    | Description         |
+|---        |----                 |
+| disk      | All QCOW2 files of all VMs will be hosted here |
+| iso       | All OS installer ISO files  |
+| fw        | Copy of Qemu firmware bios.bin and OVMF file, get the lates from https://www.kraxel.org/repos/jenkins/edk2/ (x64) |
+| cfg       | All VM configuration is stored here |
+| tpm       | All virtual TPM state folders are located here |
+| scripts   | All scripts related to starting/shuting down VM and running SWTPM on demand
+
+Copy all scripts from this repository to /var/vm/scripts.
+Copy also some sample VM configurations to /var/vm/cfg/
+
+## OVMF firmware
+OVMF firmware is recommended to run virtual machine. The recommendation is to download the latest from here:
+```
+https://www.kraxel.org/repos/jenkins/edk2/
+```
+
+Choose the x64 download and extract OVMF-pure-efi.fd
+
 ## Reboot
 Then reboot.
 ```

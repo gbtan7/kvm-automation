@@ -14,3 +14,4 @@ EGL="egl-headless"
 # local tcp socket for controlling vm
 MONITOR=7101
 DEVPT="-device usb-host,hostbus=1,hostport=2.1 -device usb-host,hostbus=1,hostport=2.2"
+TPM="tpm0"
