@@ -61,7 +61,7 @@ sudo -s <<RUNASSUDO_MODULES
 RUNASSUDO_MODULES
 done
 
-sudo update-initramfs -u
+sudo update-initramfs -u -k "all"
 ```
 ## Install and configure kernel
 
@@ -99,7 +99,7 @@ GRUB_TIMEOUT=5
 
 The next step will be to update Grub
 ```
-$ sudo update-grub2 -u -k "all"
+$ sudo update-grub2
 ```
 ## Setting up subsystem with the right permission
 
